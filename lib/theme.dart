@@ -36,4 +36,14 @@ ThemeData primaryTheme = ThemeData(
           fontSize: 18,
           letterSpacing: 2,
           fontWeight: FontWeight.bold),
+    ),
+
+    // Card Theme
+
+    cardTheme: CardTheme(
+      color: AppColors.secondaryColor.withOpacity(0.5),
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: const RoundedRectangleBorder(),
     ));
