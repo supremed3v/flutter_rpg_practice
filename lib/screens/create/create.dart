@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rpg/models/vocation.dart';
+import 'package:flutter_rpg/screens/create/vocation_card.dart';
 import 'package:flutter_rpg/shared/styled_button.dart';
 import 'package:flutter_rpg/shared/styled_text.dart';
 import 'package:flutter_rpg/theme.dart';
@@ -17,29 +19,31 @@ class _CreateState extends State<Create> {
 
   @override
   void dispose() {
+    // clean up the controller when the widget is disposed
     _nameController.dispose();
     _sloganController.dispose();
     super.dispose();
   }
 
-  // Submit handler
+  // Handling vocations selection
 
+  Vocation selectedVocation = Vocation.junkie;
+
+  void updateVocation(Vocation vocation) {
+    setState(() {
+      selectedVocation = vocation;
+    });
+  }
+
+  // submit handler
   void handleSubmit() {
-    if (_nameController.text.isNotEmpty && _sloganController.text.isNotEmpty) {
-      Navigator.pushNamed(context, '/home');
-    } else {
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: const Text('Error'),
-                content: const Text('Please fill out all fields.'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Close'),
-                  )
-                ],
-              ));
+    if (_nameController.text.trim().isEmpty) {
+      // show error in dialog
+      return;
+    }
+    if (_sloganController.text.trim().isEmpty) {
+      // show error in dialog
+      return;
     }
   }
 
@@ -48,51 +52,90 @@ class _CreateState extends State<Create> {
     return Scaffold(
       appBar: AppBar(
         title: const StyledTitle('Character Creation'),
-        centerTitle: true,
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: Column(
-          children: [
-            // Welcome message
-            Center(
-              child: Icon(Icons.code, color: AppColors.primaryColor),
-            ),
-            const Center(
-              child: StyledHeading("Welcome, new player."),
-            ),
-            const Center(
-              child: StyledText("Create a name & slogan for your character."),
-            ),
-            const SizedBox(height: 30),
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // welcome message
+              Center(
+                child: Icon(Icons.code, color: AppColors.primaryColor),
+              ),
+              const Center(
+                child: StyledHeading('Welcome, new player.'),
+              ),
+              const Center(
+                child: StyledText('Create a name & slogan for your character.'),
+              ),
+              const SizedBox(height: 30),
 
-            // Form
-            TextField(
-              controller: _nameController,
-              cursorColor: AppColors.textColor,
-              style: GoogleFonts.kanit(
-                  textStyle: Theme.of(context).textTheme.headlineMedium),
-              decoration: const InputDecoration(
+              // input for name & slogan
+              TextField(
+                controller: _nameController,
+                cursorColor: AppColors.textColor,
+                decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.person_2),
-                  label: StyledText("Character name")),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _sloganController,
-              cursorColor: AppColors.textColor,
-              style: GoogleFonts.kanit(
-                  textStyle: Theme.of(context).textTheme.headlineMedium),
-              decoration: const InputDecoration(
+                  label: StyledText('Character name'),
+                ),
+                style: GoogleFonts.kanit(
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _sloganController,
+                cursorColor: AppColors.textColor,
+                decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.chat),
-                  label: StyledText("Character slogan")),
-            ),
-            const SizedBox(height: 30),
-            Center(
+                  label: StyledText('Character slogan'),
+                ),
+                style: GoogleFonts.kanit(
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // select vocation title
+              Center(
+                child: Icon(Icons.code, color: AppColors.primaryColor),
+              ),
+              const Center(child: StyledHeading('Choose a Vocation.')),
+              const Center(
+                  child: StyledText('This determines your available skills.')),
+              const SizedBox(height: 30),
+
+              // vocation cards
+              VocationCard(
+                selected: selectedVocation == Vocation.junkie,
+                onTap: updateVocation,
+                vocation: Vocation.junkie,
+              ),
+              VocationCard(
+                selected: selectedVocation == Vocation.ninja,
+                onTap: updateVocation,
+                vocation: Vocation.ninja,
+              ),
+              VocationCard(
+                selected: selectedVocation == Vocation.wizard,
+                onTap: updateVocation,
+                vocation: Vocation.wizard,
+              ),
+              VocationCard(
+                selected: selectedVocation == Vocation.raider,
+                onTap: updateVocation,
+                vocation: Vocation.raider,
+              ),
+
+              // submit button
+              Center(
                 child: StyledButton(
-              child: const StyledHeading("Create character"),
-              onPressed: handleSubmit,
-            ))
-          ],
+                  onPressed: handleSubmit,
+                  child: const StyledHeading('Create Character'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
